@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>TDD in AngularJS</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/black.css" id="theme">
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+  <!-- Printing and PDF exports -->
+  <script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+</head>
+
+<body>
+
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+      <section data-markdown>
+        <script type="text/template">
+          # Test Driven Development in AngularJS
+        </script>
+      </section>
+      <section data-markdown>
+        <script type="text/template">
+          ## Current Issues
+          - Complexity of code higher and higher
+          - Weblab and Region feature as ON-OFF or A-B switch make test more difficult
+          - Most livesite incidents from rubick code can be tested
+            - permission and subaccount related js bugs
+            - angular component bugs
+            - weblab and region feature bugs
+        </script>
+      </section>
+      <section data-markdown>
+        <script type="text/template">
+          ## What is Test Driven Development and principle
+          - Write tests before write code
+          - Don't write more code then needed
+          - Can't cheat and blow off the tests
+          - Be confident when someone make changes on it
+          - Provide immediate feedback for every change
+          - Unit Test
+          - E2E Test
+        </script>
+      </section>
+      <section data-markdown>
+        <script type="text/template">
+          ## Advantage of TDD
+          - Catch bugs before the client(browser) does
+          - To ensure that the new code doesn't break old code
+          - To be more maintainable
+          - TDD helps design our code
+        </script>
+      </section>
+      <section data-markdown>
+        <script type="text/template">
+          ## Basic steps
+          - Create tests
+          - Check that this test fails
+          - Once the test fails, start coding util the test does not fail
+          - Once the code works, clean up, refactor all necessary
+        </script>
+      </section>
+      <section data-markdown>
+        <script type="text/template">
+          ## Test framework available for AngularJS 
+          - Mocha vs Jasmin
+          - AngularJS component makes TDD easier
+        </script>
+      </section>
+      <section>
+        <section data-markdown>
+          <script type="text/template">
+            ## Test example in AngularJS
+          </script>
+        </section>
+        <section>
+          <h2>Example Angular Component</h2>
+          <pre><code class="hljs" data-trim contenteditable>
+            angular.module('myComponentModule', [])
+              .component('myComponent', {
+                bindings: {
+                  myBinding: '@'
+                },
+                controller: function() {
+                  this.myTitle = 'Unit Testing AngularJS';
+                },
+                template: '<h1>{{ $ctrl.myTitle }} {{ $ctrl.myBinding }}</h1>'
+              });
+            </code></pre>
+        </section>
+        <section>
+          <h2>
+            Example test for Component
+          </h2>
+          <pre><code class="hljs" data-trim contenteditable>
+            describe('Component: myComponent', function () {
+              beforeEach(module('myComponentModule'));
+            
+              var element;
+              var scope;
+              beforeEach(inject(function($rootScope, $compile){
+                scope = $rootScope.$new();
+                element = angular.element('<my-component my-binding="{{outside}}"></my-component>');
+                element = $compile(element)(scope);
+                scope.outside = '1.5';
+                scope.$apply();
+              }));
+              it('should render the text', function() {
+                var h1 = element.find('h1');
+                expect(h1.text()).toBe('Unit Testing AngularJS 1.5');
+              });
+            });
+            </code></pre>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            ## Some other examples
+            - [Testing a filter](http://jsfiddle.net/kFLuV/1/)
+            - [Testing a directive](http://jsfiddle.net/Fh3V7/)
+            - [Testing a controller](http://jsfiddle.net/ntFKL/)
+            - [Testing a service](http://jsfiddle.net/B72tr/)
+          </script>
+        </section>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+          ## How to practice TDD in Rubick
+          - UI frequent changes
+          - JS need be rewritten(not just refactoring)
+          - Product requriements frequent changes
+          - More time cost
+          - Now, Component first, businessless design code for TDD
+        </script>
+      </section>
+
+      <scction>
+        <script type="text/template">
+          ## References
+          - [angular-seed](https://github.com/angular/angular-seed)
+          - [angular-docs](https://docs.angularjs.org/guide/unit-testing)
+        </script>
+      </scction>
+
+  
+    </div>
+
+  </div>
+
+  <script src="lib/js/head.min.js"></script>
+  <script src="js/reveal.js"></script>
+
+  <script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+</body>
+
+</html>
